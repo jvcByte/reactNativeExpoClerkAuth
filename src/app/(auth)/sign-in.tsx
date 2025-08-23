@@ -10,7 +10,6 @@ import CustomButton from '@ui/CustomButton';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod/v3';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Link } from 'expo-router';
 import AuthNav from '@/components/AuthNav';
 
 const signInSchema = z.object({
@@ -48,7 +47,6 @@ export default function SignInScreen() {
                     name='email'
                     control={control}
                     placeholder='Email'
-                    autoFocus
                     autoCapitalize='none'
                     keyboardType='email-address'
                     autoComplete='email'

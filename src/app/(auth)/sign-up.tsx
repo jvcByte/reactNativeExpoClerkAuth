@@ -1,4 +1,3 @@
-import { StatusBar } from 'expo-status-bar';
 import {
     StyleSheet,
     Text,
@@ -48,7 +47,6 @@ export default function SignUpScreen() {
                     name='email'
                     control={control}
                     placeholder='Email'
-                    autoFocus
                     autoCapitalize='none'
                     keyboardType='email-address'
                     autoComplete='email'
