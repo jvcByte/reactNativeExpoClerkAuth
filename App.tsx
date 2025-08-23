@@ -31,9 +31,6 @@ export default function App() {
       <CustomButton
         text="Sign in"
         onPress={() => { console.log('Sign in button pressed') }}
-        style={{
-            backgroundColor: 'red',
-        }}
       />
       
       <StatusBar style="auto" />
