@@ -2,11 +2,11 @@ import { StatusBar } from 'expo-status-bar';
 import {
   StyleSheet,
   Text,
-  Pressable,
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
 import CustomInput from './src/components/ui/CustomInput';
+import CustomButton from './src/components/ui/CustomButton';
 
 export default function App() {
   return (
@@ -28,9 +28,13 @@ export default function App() {
         secureTextEntry
       />
       
-      <Pressable style={styles.button} onPress={() => { console.log('Sign in button pressed') }}>
-        <Text style={styles.buttonText}>Sign in</Text>
-      </Pressable>
+      <CustomButton
+        text="Sign in"
+        onPress={() => { console.log('Sign in button pressed') }}
+        style={{
+            backgroundColor: 'red',
+        }}
+      />
       
       <StatusBar style="auto" />
     </KeyboardAvoidingView>
@@ -49,21 +53,5 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-  },
-
-  
-
-  button: {
-    backgroundColor: '#4353fd',
-    padding: 10,
-    borderRadius: 5,
-    alignItems: 'center',
-  },
-
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-    // textAlign: 'center',
   },
 });
