@@ -1,50 +1,57 @@
-import { StyleSheet, TextInput, TextInputProps, Text } from "react-native";
+import { StyleSheet, TextInput, TextInputProps, Text, View } from "react-native";
 import { Controller } from "react-hook-form";
 
 type CustomInputProps = {
     control: any;
     name: string;
-    isRequired?: any;
 } & TextInputProps;
 
-export default function CustomInput({control, name, isRequired, ...props}: CustomInputProps) {
+export default function CustomInput({control, name, ...props}: CustomInputProps) {
     return (
         <Controller
             control={control}
             name={name}
-            rules={{required: isRequired}}
             render={({
                 field: { value, onChange, onBlur },
                 fieldState: { error }
             }) => (
-                <>
+                <View style={styles.container}>
                     <TextInput
                         {...props}
                         value={value}
                         onChangeText={onChange}
                         onBlur={onBlur}
-                        placeholder={error ? error.message : props.placeholder}
-                        placeholderTextColor={error ? 'rgba(220, 20, 60, 0.5)' : undefined}
                         style={[
                             styles.input,
                             props.style,
                             error && styles.inputError
                         ]}
                     />
-                </>
+                    {<Text style={styles.errorText}>{error?.message}</Text>}
+                </View>
             )}
         />
     )
 }
 
 const styles = StyleSheet.create({
+    container: {
+        gap: 2,
+    },
     input: {
         borderWidth: 1,
         borderColor: '#ccc',
         padding: 10,
         borderRadius: 5,
     },
+
+    errorText: {
+        color: 'crimson',
+        fontSize: 12,
+        marginTop: 2,
+    },
     inputError: {
         borderColor: 'crimson',
+        borderWidth: 1,
     },
 });
