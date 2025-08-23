@@ -6,8 +6,8 @@ import {
   Platform,
   View,
 } from 'react-native';
-import CustomInput from './src/components/ui/CustomInput';
-import CustomButton from './src/components/ui/CustomButton';
+import CustomInput from '@ui/CustomInput';
+import CustomButton from '@ui/CustomButton';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod/v3';
 import { zodResolver } from '@hookform/resolvers/zod';
