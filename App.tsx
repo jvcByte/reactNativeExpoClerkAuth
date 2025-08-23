@@ -7,33 +7,49 @@ import {
 } from 'react-native';
 import CustomInput from './src/components/ui/CustomInput';
 import CustomButton from './src/components/ui/CustomButton';
+import { useForm } from 'react-hook-form';
 
 export default function App() {
+
+  const { control, handleSubmit, formState: { errors } } = useForm();
+
+  console.log('Errors: ', errors)
+
+  const onSignin = (data: any) => {
+    console.log('Sign in: ', data)
+  }
+
   return (
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-      
+
       <Text style={styles.title}>Sign in</Text>
       
       <CustomInput
-        placeholder="Email"
+        isRequired="Email is required"
+        name='email'
+        control={control}
+        placeholder='Email'
         autoFocus
-        autoCapitalize="none"
-        keyboardType="email-address"
-        autoComplete="email"
+        autoCapitalize='none'
+        keyboardType='email-address'
+        autoComplete='email'
       />
       <CustomInput
-        placeholder="Password"
+        isRequired="Password is required"
+        name='password'
+        control={control}
+        placeholder='Password'
         secureTextEntry
       />
-      
+
       <CustomButton
-        text="Sign in"
-        onPress={() => { console.log('Sign in button pressed') }}
+        text='Sign in'
+        onPress={handleSubmit(onSignin)}
       />
-      
-      <StatusBar style="auto" />
+
+      <StatusBar style='auto' />
     </KeyboardAvoidingView>
   );
 }
