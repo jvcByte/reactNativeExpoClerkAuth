@@ -25,7 +25,7 @@ export default function App() {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm({
+  } = useForm<SigninField>({
     resolver: zodResolver(signInSchema),
   });
 
