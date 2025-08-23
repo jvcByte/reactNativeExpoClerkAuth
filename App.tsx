@@ -10,10 +10,22 @@ import {
 
 export default function App() {
   return (
-    <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+      
       <Text style={styles.title}>Sign in</Text>
-      <TextInput placeholder="Email" style={styles.input} />
-      <TextInput placeholder="Password" style={styles.input} secureTextEntry />
+      <TextInput placeholder="Email"
+        style={styles.input}
+        autoFocus
+        autoCapitalize="none"
+        keyboardType="email-address"
+        autoComplete="email"
+      />
+      <TextInput placeholder="Password"
+        style={styles.input}
+        secureTextEntry
+      />
       
       <Pressable style={styles.button} onPress={() => { console.log('Sign in button pressed') }}>
         <Text style={styles.buttonText}>Sign in</Text>
@@ -28,7 +40,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    justifyContent: 'flex-end',
+    justifyContent: 'center',
     padding: 20,
     gap: 20,
   },
