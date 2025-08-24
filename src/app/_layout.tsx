@@ -1,12 +1,12 @@
 import { Slot } from "expo-router";
+import { AuthProvider } from "@/providers/AuthProvider";
 
 export default function RootLayout() {
     console.log('Root Layout')
-    // return (
-    //     <Stack>
-    //         <Stack.Screen name="index" options={{ headerShown: false }} />
-    //     </Stack>
-    // )
 
-    return <Slot />
+    return (
+        <AuthProvider>
+            <Slot />
+        </AuthProvider>
+    )
 }

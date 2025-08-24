@@ -1,15 +1,25 @@
 import { Text, View, StyleSheet } from "react-native"
 import { Link } from "expo-router"
+import { useAuth } from "@/providers/AuthProvider"
+import CustomButton from "@/components/ui/CustomButton";
 
-export default function Index() {
+export default function WelcomeScreen() {
+  const { user, signOut } = useAuth();
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}> Welcome Screen</Text>
+      <Text>{user ? 'You are signed in' : 'You are signed out'}</Text>
       <View style={styles.linkContainer}>
         <Link href="/sign-in" style={styles.link}>Sign In</Link>
         <Link href="/sign-up" style={styles.link}>Sign Up</Link>
         <Link href="/(protected)" style={styles.link}>Go to Protected Screen</Link>
       </View>
+      <CustomButton
+        text="Sign Out"
+        onPress={signOut}
+        style={{ width: 200 }}
+      />
     </View>
   )
 }

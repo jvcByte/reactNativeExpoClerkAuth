@@ -11,6 +11,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod/v3';
 import { zodResolver } from '@hookform/resolvers/zod';
 import AuthNav from '@/components/AuthNav';
+import { useAuth } from '@/providers/AuthProvider';
 
 const signInSchema = z.object({
     email: z.string({ message: 'Email is required' }).email({ message: 'Invalid email' }),
@@ -20,6 +21,8 @@ const signInSchema = z.object({
 type SignInField = z.infer<typeof signInSchema>;
 
 export default function SignInScreen() {
+
+    const { signIn } = useAuth();
 
     const {
         control,
@@ -33,6 +36,7 @@ export default function SignInScreen() {
 
     const onSignIn = (data: SignInField) => {
         console.log('Sign in: ', data)
+        signIn();
     }
 
     return (
