@@ -13,6 +13,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import AuthNav from '@/components/AuthNav';
 import { isClerkAPIResponseError, useSignIn } from '@clerk/clerk-expo';
 import { router } from 'expo-router';
+import SignInWith from '@/components/SignInWith';
 
 const signInSchema = z.object({
     email: z.string({ message: 'Email is required' }).email({ message: 'Invalid email' }),
@@ -108,6 +109,12 @@ export default function SignInScreen() {
                 text='Sign in'
                 onPress={handleSubmit(onSignIn)}
             />
+            <View style={styles.orContainer}>
+                <View style={styles.orLine} />
+                <Text style={styles.or}>Or</Text>
+                <View style={styles.orLine} />
+            </View>
+            <SignInWith />  
 
             <AuthNav title={'Don\'t have an account?'} text={'Sign up'} href={'/sign-up'} />
         </KeyboardAvoidingView>
@@ -141,5 +148,23 @@ const styles = StyleSheet.create({
         padding: 10,
         borderRadius: 5,
         backgroundColor: 'rgba(255, 0, 0, 0.1)',
+    },
+
+    or: {
+        textAlign: 'center',
+        paddingHorizontal: 12,
+        color: '#666',
+        backgroundColor: 'white',
+        zIndex: 1,
+    },
+    orContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginVertical: 12,
+    },
+    orLine: {
+        flex: 1,
+        height: 1.5,
+        backgroundColor: '#ddd',
     },
 });
