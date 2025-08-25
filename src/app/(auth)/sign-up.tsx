@@ -11,6 +11,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod/v3';
 import { zodResolver } from '@hookform/resolvers/zod';
 import AuthNav from '@/components/AuthNav';
+import { useSignUp } from '@clerk/clerk-expo';
 
 const signUpSchema = z.object({
     email: z.string({ message: 'Email is required' }).email({ message: 'Invalid email' }),
@@ -29,10 +30,23 @@ export default function SignUpScreen() {
         resolver: zodResolver(signUpSchema),
     });
 
+    const { signUp, isLoaded } = useSignUp();
+
     console.log('Errors: ', errors)
 
-    const onSignUp = (data: SignUpField) => {
+    const onSignUp = async (data: SignUpField) => {
         console.log('Sign up: ', data)
+
+        if (!isLoaded) return;
+
+        try {
+            await signUp.create({
+                emailAddress: data.email,
+                password: data.password,
+            })
+        } catch (error) {
+            console.log('Error: ', error)
+        }
     }
 
     return (

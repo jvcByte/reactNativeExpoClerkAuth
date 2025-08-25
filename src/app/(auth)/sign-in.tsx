@@ -11,7 +11,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod/v3';
 import { zodResolver } from '@hookform/resolvers/zod';
 import AuthNav from '@/components/AuthNav';
-import { useAuth } from '@/providers/AuthProvider';
+import { useSignIn } from '@clerk/clerk-expo';
 
 const signInSchema = z.object({
     email: z.string({ message: 'Email is required' }).email({ message: 'Invalid email' }),
@@ -22,8 +22,6 @@ type SignInField = z.infer<typeof signInSchema>;
 
 export default function SignInScreen() {
 
-    const { signIn } = useAuth();
-
     const {
         control,
         handleSubmit,
@@ -31,12 +29,31 @@ export default function SignInScreen() {
     } = useForm<SignInField>({
         resolver: zodResolver(signInSchema),
     });
+    const { signIn, isLoaded, setActive } = useSignIn();
 
     console.log('Errors: ', errors)
 
-    const onSignIn = (data: SignInField) => {
+    const onSignIn = async(data: SignInField) => {
         console.log('Sign in: ', data)
-        signIn();
+
+        if (!isLoaded) return;
+
+        try {
+            const signInResult = await signIn.create({
+                identifier: data.email,
+                password: data.password,
+            })
+
+            if (signInResult.status === 'complete') {
+                console.log('Sign in complete')
+                setActive({session: signInResult.createdSessionId})
+            } else {
+                console.log('Sign in not complete')
+            }
+        } catch (error) {
+            console.log('Error: ', error)
+        }
+        
     }
 
     return (
