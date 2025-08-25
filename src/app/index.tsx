@@ -13,6 +13,7 @@ export default function WelcomeScreen() {
       <View style={styles.linkContainer}>
         <Link href="/sign-in" style={styles.link}>Sign In</Link>
         <Link href="/sign-up" style={styles.link}>Sign Up</Link>
+        <Link href="/verify" style={styles.link}>Verify</Link>
         <Link href="/(protected)" style={styles.link}>Go to Protected Screen</Link>
       </View>
       <CustomButton

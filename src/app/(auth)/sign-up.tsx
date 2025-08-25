@@ -12,6 +12,7 @@ import { z } from 'zod/v3';
 import { zodResolver } from '@hookform/resolvers/zod';
 import AuthNav from '@/components/AuthNav';
 import { useSignUp } from '@clerk/clerk-expo';
+import { router } from 'expo-router';
 
 const signUpSchema = z.object({
     email: z.string({ message: 'Email is required' }).email({ message: 'Invalid email' }),
@@ -44,8 +45,12 @@ export default function SignUpScreen() {
                 emailAddress: data.email,
                 password: data.password,
             })
+            await signUp.prepareVerification({
+                strategy: 'email_code',
+            })
+            router.push('/verify');
         } catch (error) {
-            console.log('Error: ', error)
+            console.log('Error: ', error);
         }
     }
 
