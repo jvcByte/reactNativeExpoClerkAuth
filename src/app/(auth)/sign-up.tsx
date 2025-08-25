@@ -13,6 +13,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import AuthNav from '@/components/AuthNav';
 import { useSignUp } from '@clerk/clerk-expo';
 import { router } from 'expo-router';
+import { isClerkAPIResponseError } from '@clerk/clerk-expo';
 
 const signUpSchema = z.object({
     email: z.string({ message: 'Email is required' }).email({ message: 'Invalid email' }),
@@ -21,12 +22,24 @@ const signUpSchema = z.object({
 
 type SignUpField = z.infer<typeof signUpSchema>;
 
+const mapClerkErrorToFormField = (error: any) => {
+    switch (error.meta?.paramName) {
+        case 'email_address':
+            return 'email'
+        case 'password':
+            return 'password'
+        default:
+            return 'root'
+    }
+}
+
 export default function SignUpScreen() {
 
     const {
         control,
         handleSubmit,
         formState: { errors },
+        setError
     } = useForm<SignUpField>({
         resolver: zodResolver(signUpSchema),
     });
@@ -35,22 +48,31 @@ export default function SignUpScreen() {
 
     console.log('Errors: ', errors)
 
-    const onSignUp = async (data: SignUpField) => {
-        console.log('Sign up: ', data)
+    const onSignUp = async ({email, password}: SignUpField) => {
+        console.log('Sign up: ', {email, password})
 
         if (!isLoaded) return;
 
         try {
             await signUp.create({
-                emailAddress: data.email,
-                password: data.password,
+                emailAddress: email,
+                password: password,
             })
             await signUp.prepareVerification({
                 strategy: 'email_code',
             })
             router.push('/verify');
-        } catch (error) {
-            console.log('Error: ', error);
+        } catch (err) {
+            console.log('Sign up Error: ', err);
+            if (isClerkAPIResponseError(err)) {
+                console.log('Clerk API Error: ', JSON.stringify(err.errors, null, 2))
+                err.errors.forEach((error) => {
+                    const fieldName = mapClerkErrorToFormField(error)
+                    setError(fieldName, { message: error.longMessage })
+                })
+            } else {
+                setError('root', { message: 'Something went wrong' })
+            }
         }
     }
 
@@ -77,6 +99,9 @@ export default function SignUpScreen() {
                     secureTextEntry
                 />
             </View>
+            {errors.root?.message && (
+                <Text style={styles.error}>{errors.root?.message}</Text>
+            )}
 
             <CustomButton
                 text='Sign up'
@@ -104,5 +129,15 @@ const styles = StyleSheet.create({
 
     form: {
         gap: 4,
-    }
+    },
+    error: {
+        color: 'crimson',
+        fontSize: 12,
+        textAlign: 'center',
+        borderWidth: 1,
+        borderColor: 'crimson',
+        padding: 10,
+        borderRadius: 5,
+        backgroundColor: 'rgba(255, 0, 0, 0.1)',
+    },
 });

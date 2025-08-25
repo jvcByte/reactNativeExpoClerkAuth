@@ -11,7 +11,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod/v3';
 import { zodResolver } from '@hookform/resolvers/zod';
 import AuthNav from '@/components/AuthNav';
-import { useSignUp } from '@clerk/clerk-expo';
+import { isClerkAPIResponseError, useSignUp } from '@clerk/clerk-expo';
 import { router } from 'expo-router';
 
 const verifySchema = z.object({
@@ -20,12 +20,22 @@ const verifySchema = z.object({
 
 type VerifyField = z.infer<typeof verifySchema>;
 
+const mapClerkErrorToFormField = (error: any) => {
+    switch (error.meta?.paramName) {
+        case 'code':
+            return 'code'
+        default:
+            return 'root'
+    }
+}
+
 export default function VerifyScreen() {
 
     const {
         control,
         handleSubmit,
         formState: { errors },
+        setError
     } = useForm<VerifyField>({
         resolver: zodResolver(verifySchema),
     });
@@ -50,9 +60,19 @@ export default function VerifyScreen() {
                 router.push('/')
             } else {
                 console.log('Sign up not complete: ', signUpResult)
+                setError('root', { message: 'Could not verify code. Please try again' })
             }
         } catch (error) {
             console.log('Error: ', error);
+            if (isClerkAPIResponseError(error)) {
+                error.errors.forEach((error) => {
+                    console.log('Clerk API Error: ', JSON.stringify(error, null, 2))
+                    const fieldName = mapClerkErrorToFormField(error)
+                    setError(fieldName, { message: error.longMessage })
+                })
+            } else {
+                setError('root', { message: 'Something went wrong' })
+            }
         }
     }
 
@@ -71,6 +91,10 @@ export default function VerifyScreen() {
                 keyboardType='numeric'
                 autoComplete='one-time-code'
             />
+
+            {errors.root?.message && (
+                <Text style={styles.error}>{errors.root?.message}</Text>
+            )}
 
             <CustomButton
                 text='Verify'
@@ -92,5 +116,16 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 24,
         fontWeight: 'bold',
+    },
+
+    error: {
+        color: 'crimson',
+        fontSize: 12,
+        textAlign: 'center',
+        borderWidth: 1,
+        borderColor: 'crimson',
+        padding: 10,
+        borderRadius: 5,
+        backgroundColor: 'rgba(255, 0, 0, 0.1)',
     },
 });

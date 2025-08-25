@@ -11,7 +11,8 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod/v3';
 import { zodResolver } from '@hookform/resolvers/zod';
 import AuthNav from '@/components/AuthNav';
-import { useSignIn } from '@clerk/clerk-expo';
+import { isClerkAPIResponseError, useSignIn } from '@clerk/clerk-expo';
+import { router } from 'expo-router';
 
 const signInSchema = z.object({
     email: z.string({ message: 'Email is required' }).email({ message: 'Invalid email' }),
@@ -20,12 +21,24 @@ const signInSchema = z.object({
 
 type SignInField = z.infer<typeof signInSchema>;
 
+const mapClerkErrorToFormField = (error: any) => {
+    switch (error.meta?.paramName) {
+        case 'identifier':
+            return 'email'
+        case 'password':
+            return 'password'
+        default:
+            return 'root'
+    }
+}
+
 export default function SignInScreen() {
 
     const {
         control,
         handleSubmit,
         formState: { errors },
+        setError
     } = useForm<SignInField>({
         resolver: zodResolver(signInSchema),
     });
@@ -33,27 +46,35 @@ export default function SignInScreen() {
 
     console.log('Errors: ', errors)
 
-    const onSignIn = async(data: SignInField) => {
-        console.log('Sign in: ', data)
+    const onSignIn = async ({ email, password }: SignInField) => {
+        console.log('Sign in: ', { email, password })
 
         if (!isLoaded) return;
 
         try {
             const signInResult = await signIn.create({
-                identifier: data.email,
-                password: data.password,
+                identifier: email,
+                password: password,
             })
 
             if (signInResult.status === 'complete') {
                 console.log('Sign in complete')
-                setActive({session: signInResult.createdSessionId})
+                setActive({ session: signInResult.createdSessionId })
+                router.push('/')
             } else {
-                console.log('Sign in not complete')
+                console.log('Sign in not complete: ', signInResult)
             }
         } catch (error) {
-            console.log('Error: ', error)
+            console.log('Error: ', JSON.stringify(error, null, 2))
+            if (isClerkAPIResponseError(error)) {
+                error.errors.forEach((error) => {
+                    const fieldName = mapClerkErrorToFormField(error)
+                    setError(fieldName, { message: error.longMessage })
+                })
+            } else {
+                setError('root', { message: 'Something went wrong' })
+            }
         }
-        
     }
 
     return (
@@ -79,6 +100,9 @@ export default function SignInScreen() {
                     secureTextEntry
                 />
             </View>
+            {errors.root?.message && (
+                <Text style={styles.error}>{errors.root?.message}</Text>
+            )}
 
             <CustomButton
                 text='Sign in'
@@ -95,8 +119,8 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff',
         justifyContent: 'center',
-        padding: 20,
-        gap: 20,
+        padding: 25,
+        gap: 8,
     },
 
     title: {
@@ -106,5 +130,16 @@ const styles = StyleSheet.create({
 
     form: {
         gap: 4,
+    },
+
+    error: {
+        color: 'crimson',
+        fontSize: 12,
+        textAlign: 'center',
+        borderWidth: 1,
+        borderColor: 'crimson',
+        padding: 10,
+        borderRadius: 5,
+        backgroundColor: 'rgba(255, 0, 0, 0.1)',
     },
 });
