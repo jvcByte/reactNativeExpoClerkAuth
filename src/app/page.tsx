@@ -1,13 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ConnectButton } from 'thirdweb/react';
-import { thirdwebClient } from '../lib/thirdweb/client';
-import { Header } from '@/components/layout/Header';
-import { ThirdwebResources } from '@/components/layout/ThirdwebResources';
+import HeroSection from '@/components/layout/hero-section';
 import { ErrorBoundary } from '@/components/common/ErrorBoundary';
-import { HeaderSkeleton, ResourcesSkeleton } from '@/components/ui/Skeleton';
-import { config } from '@/lib/config';
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
@@ -31,17 +26,17 @@ export default function Home() {
           setError(err);
         }}
       >
-        <div className="min-h-screen flex items-center justify-center p-4">
+        <div className="min-h-screen flex items-center justify-center p-4 bg-background">
           <div className="text-center">
             <h2 className="text-2xl font-bold text-red-500 mb-4">
               Something went wrong
             </h2>
-            <p className="text-zinc-400 mb-6">
+            <p className="text-muted-foreground mb-6">
               We&apos;re having trouble loading the application. Please try again later.
             </p>
             <button
               onClick={() => window.location.reload()}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
             >
               Retry
             </button>
@@ -53,38 +48,16 @@ export default function Home() {
 
   return (
     <ErrorBoundary onError={(err) => setError(err)}>
-      <main className="min-h-screen bg-zinc-950 text-white">
-        <div className="container mx-auto px-4 py-10">
-          {isLoading ? (
-            // Show loading state
-            <div className="space-y-20">
-              <HeaderSkeleton />
-              <div className="flex justify-center">
-                <div className="h-12 w-48 bg-zinc-800 rounded-lg animate-pulse"></div>
-              </div>
-              <ResourcesSkeleton />
-            </div>
-          ) : (
-            // Show content when loaded
-            <div className="space-y-20">
-              <Header />
-
-              <div className="flex justify-center">
-                <ConnectButton
-                  client={thirdwebClient}
-                  appMetadata={{
-                    name: config.app.name,
-                    url: config.app.url,
-                  }}
-                  theme="dark"
-                />
-              </div>
-
-              <ThirdwebResources />
-            </div>
-          )}
+      {isLoading ? (
+        <div className="min-h-screen flex items-center justify-center bg-background">
+          <div className="animate-pulse flex flex-col items-center gap-4">
+            <div className="h-12 w-48 bg-muted rounded-lg"></div>
+            <div className="h-4 w-32 bg-muted rounded"></div>
+          </div>
         </div>
-      </main>
+      ) : (
+        <HeroSection />
+      )}
     </ErrorBoundary>
   );
 }
