@@ -12,6 +12,7 @@ import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { authClient } from '@/lib/better-auth/auth-client';
 
 // Define the form schema with Zod
 const signupFormSchema = z.object({
@@ -48,6 +49,7 @@ export function SignupForm({
     setError,
   } = useForm<SignupFormValues>({
     resolver: zodResolver(signupFormSchema),
+
     defaultValues: {
       email: '',
       password: '',
@@ -55,14 +57,23 @@ export function SignupForm({
     },
   });
 
-  const onSubmit = async (data: SignupFormValues) => {
+  const onSubmit = async ({ email, password }: SignupFormValues) => {
     try {
-      // TODO: Replace with actual signup logic
 
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      const { data, error: err } = await authClient.signUp.email({
+        name: "John Doe", // required
+        email: email,
+        password: password,
+        image: "https://example.com/image.png",
+        callbackURL: "/dashboard",
+      });
+
+      if (err) {
+        toast.error(`Sign up failed: ${err.message}`)
+        return
+      }
       toast.success(`Account created successfully: ${data}`);
-      router.push('/login');
+      router.push('/dashboard');
     } catch (error) {
       setError('root', {
         type: 'manual',
