@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label"
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import Image from "next/image"
 
 // Define the form schema with Zod
 const loginFormSchema = z.object({
@@ -46,9 +47,10 @@ export function LoginForm({
   const onSubmit = async (data: LoginFormValues) => {
     try {
       // TODO: Replace with actual login logic
+      
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      toast.success('Successfully logged in!');
+      toast.success(`Successfully logged in: ${data}`);
       router.push('/dashboard');
     } catch (error) {
       toast.error(`Login failed: ${error}`);
@@ -175,9 +177,11 @@ export function LoginForm({
             </div>
           </form>
           <div className="relative hidden bg-muted md:block">
-            <img
+            <Image
               src="/jvcbyte-bnw.png"
               alt="Image"
+              width={1000}
+              height={1000}
               className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
             />
           </div>
