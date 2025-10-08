@@ -44,13 +44,13 @@ export function LoginForm({
     },
   });
 
-  const onSubmit = async (data: LoginFormValues) => {
+  const onSubmit = async ({email, password}: LoginFormValues) => {
     try {
       // TODO: Replace with actual login logic
       
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      toast.success(`Successfully logged in: ${data}`);
+      toast.success(`Successfully logged in: ${email} ${password}`);
       router.push('/dashboard');
     } catch (error) {
       toast.error(`Login failed: ${error}`);
