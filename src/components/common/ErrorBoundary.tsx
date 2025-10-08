@@ -1,27 +1,33 @@
 'use client';
 
-import React, { Component, ErrorInfo, ReactNode } from 'react';
-interface Props {
-  children: ReactNode;
-  fallback?: ReactNode;
-  onError?: (error: Error, errorInfo: ErrorInfo) => void;
-}
+import React, { Component, ErrorInfo, ReactNode, ComponentType } from 'react';
 
-interface State {
+export type ErrorBoundaryFallbackProps = {
+  error: Error;
+  resetErrorBoundary: () => void;
+};
+
+type ErrorBoundaryProps = {
+  children: ReactNode;
+  fallback: ReactNode | ComponentType<ErrorBoundaryFallbackProps>;
+  onError?: (error: Error, errorInfo: ErrorInfo) => void;
+};
+
+type ErrorBoundaryState = {
   hasError: boolean;
-  error?: Error;
-}
+  error: Error | null;
+};
 
 /**
  * Error Boundary component to catch and display errors gracefully
  */
-export class ErrorBoundary extends Component<Props, State> {
-  constructor(props: Props) {
+export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  constructor(props: ErrorBoundaryProps) {
     super(props);
-    this.state = { hasError: false };
+    this.state = { hasError: false, error: null };
   }
 
-  static getDerivedStateFromError(error: Error): State {
+  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
     return { hasError: true, error };
   }
 
@@ -40,15 +46,22 @@ export class ErrorBoundary extends Component<Props, State> {
     }
   }
 
-  render() {
-    if (this.state.hasError) {
-      // Custom fallback UI
-      if (this.props.fallback) {
-        return this.props.fallback;
-      }
+  resetErrorBoundary = () => {
+    this.setState({ hasError: false, error: null });
+  };
 
-      // Default error UI
-      return (
+  render() {
+    const { fallback, children } = this.props;
+    const { hasError, error } = this.state;
+
+    if (hasError && error) {
+      if (typeof fallback === 'function') {
+        // Handle both function components and class components
+        const FallbackComponent = fallback;
+        return <FallbackComponent error={error} resetErrorBoundary={this.resetErrorBoundary} />;
+      }
+      
+      return fallback || (
         <div className="min-h-[400px] flex items-center justify-center">
           <div className="text-center space-y-4 p-8 max-w-md mx-auto">
             <div className="w-16 h-16 mx-auto bg-red-500/10 rounded-full flex items-center justify-center">
@@ -85,20 +98,20 @@ export class ErrorBoundary extends Component<Props, State> {
               </button>
 
               <button
-                onClick={() => this.setState({ hasError: false, error: undefined })}
+                onClick={this.resetErrorBoundary}
                 className="px-4 py-2 border border-zinc-600 text-zinc-300 rounded-lg hover:bg-zinc-800 transition-colors text-sm font-medium"
               >
                 Try Again
               </button>
             </div>
 
-            {process.env.NODE_ENV === 'development' && this.state.error && (
+            {process.env.NODE_ENV === 'development' && error && (
               <details className="mt-4 text-left">
                 <summary className="text-sm text-zinc-500 cursor-pointer hover:text-zinc-400">
                   Error Details (Development)
                 </summary>
                 <pre className="mt-2 text-xs bg-zinc-900 p-3 rounded border text-zinc-300 overflow-auto">
-                  {this.state.error.toString()}
+                  {error.toString()}
                 </pre>
               </details>
             )}
@@ -107,7 +120,7 @@ export class ErrorBoundary extends Component<Props, State> {
       );
     }
 
-    return this.props.children;
+    return children;
   }
 }
 
