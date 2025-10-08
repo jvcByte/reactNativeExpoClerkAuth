@@ -34,7 +34,7 @@ export function SignupForm() {
       
       router.push('/login');
     } catch (error) {
-      toast.error('Failed to create account. Please try again.');
+      toast.error(`Failed to create account: ${error}`);
     } finally {
       setIsLoading(false);
     }

@@ -1,8 +1,6 @@
 'use client';
 
 import React, { Component, ErrorInfo, ReactNode } from 'react';
-import { AppError } from '@/types';
-
 interface Props {
   children: ReactNode;
   fallback?: ReactNode;
