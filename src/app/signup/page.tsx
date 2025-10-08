@@ -8,10 +8,10 @@ export const metadata: Metadata = {
 
 export default function SignupPage() {
   return (
-    <div className="container flex h-screen w-screen flex-col items-center justify-center">
-      <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[400px]">
+    <div className="bg-muted flex min-h-svh flex-col items-center justify-center p-6 md:p-10">
+      <div className="w-full max-w-sm md:max-w-4xl">
         <SignupForm />
       </div>
     </div>
-  );
+  )
 }
