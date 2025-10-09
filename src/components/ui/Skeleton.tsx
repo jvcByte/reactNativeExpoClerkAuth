@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils';
+import { cn } from "@/lib/utils";
 
 /**
  * Skeleton component for loading states
@@ -9,10 +9,7 @@ export function Skeleton({
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn(
-        "animate-pulse rounded-md bg-zinc-800/50",
-        className
-      )}
+      className={cn("animate-pulse rounded-md bg-zinc-800/50", className)}
       {...props}
     />
   );
@@ -23,10 +20,12 @@ export function Skeleton({
  */
 export function ArticleCardSkeleton({ className }: { className?: string }) {
   return (
-    <div className={cn(
-      "flex flex-col border border-zinc-800 p-4 rounded-lg space-y-3",
-      className
-    )}>
+    <div
+      className={cn(
+        "flex flex-col border border-zinc-800 p-4 rounded-lg space-y-3",
+        className,
+      )}
+    >
       <Skeleton className="h-5 w-3/4" />
       <Skeleton className="h-4 w-full" />
       <Skeleton className="h-4 w-2/3" />
@@ -40,10 +39,12 @@ export function ArticleCardSkeleton({ className }: { className?: string }) {
  */
 export function HeaderSkeleton({ className }: { className?: string }) {
   return (
-    <header className={cn(
-      "flex flex-col items-center mb-20 md:mb-20 space-y-6",
-      className
-    )}>
+    <header
+      className={cn(
+        "flex flex-col items-center mb-20 md:mb-20 space-y-6",
+        className,
+      )}
+    >
       <Skeleton className="w-[150px] h-[150px] rounded-full" />
       <div className="space-y-3 text-center">
         <Skeleton className="h-8 w-64 mx-auto" />
