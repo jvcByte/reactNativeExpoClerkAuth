@@ -1,39 +1,42 @@
-'use client';
+"use client";
 
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Loader2 } from 'lucide-react';
-import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
-import Image from 'next/image';
-import { authClient } from '@/lib/better-auth/auth-client';
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { authClient } from "@/lib/better-auth/auth-client";
 
 // Define the form schema with Zod
-const signupFormSchema = z.object({
-  email: z.string()
-    .min(1, 'Email is required')
-    .email('Enter a valid email address'),
-  password: z.string()
-    .min(1, 'Password is required')
-    .min(8, 'At least 8 characters')
-    .max(100, 'Less than 100 characters'),
-  confirmPassword: z.string()
-    .min(1, 'Confirm your password'),
-}).refine(
-  (values) => {
-    return values.password === values.confirmPassword;
-  },
-  {
-    message: "Passwords must match!",
-    path: ["confirmPassword"],
-  },
-);
+const signupFormSchema = z
+  .object({
+    email: z
+      .string()
+      .min(1, "Email is required")
+      .email("Enter a valid email address"),
+    password: z
+      .string()
+      .min(1, "Password is required")
+      .min(8, "At least 8 characters")
+      .max(100, "Less than 100 characters"),
+    confirmPassword: z.string().min(1, "Confirm your password"),
+  })
+  .refine(
+    (values) => {
+      return values.password === values.confirmPassword;
+    },
+    {
+      message: "Passwords must match!",
+      path: ["confirmPassword"],
+    },
+  );
 
 type SignupFormValues = z.infer<typeof signupFormSchema>;
 
@@ -51,15 +54,14 @@ export function SignupForm({
     resolver: zodResolver(signupFormSchema),
 
     defaultValues: {
-      email: '',
-      password: '',
-      confirmPassword: '',
+      email: "",
+      password: "",
+      confirmPassword: "",
     },
   });
 
   const onSubmit = async ({ email, password }: SignupFormValues) => {
     try {
-
       const { data, error: err } = await authClient.signUp.email({
         name: "John Doe", // required
         email: email,
@@ -69,14 +71,14 @@ export function SignupForm({
       });
 
       if (err) {
-        toast.error(`Sign up failed: ${err.message}`)
-        return
+        toast.error(`Sign up failed: ${err.message}`);
+        return;
       }
       toast.success(`Account created successfully: ${data}`);
-      router.push('/dashboard');
+      router.push("/dashboard");
     } catch (error) {
-      setError('root', {
-        type: 'manual',
+      setError("root", {
+        type: "manual",
         message: `Failed to create account: ${error} `,
       });
     }
@@ -96,7 +98,9 @@ export function SignupForm({
               </div>
 
               {/* Error message with fixed height to prevent layout shift */}
-              <div className={`transition-all duration-200 ${errors.root ? 'min-h-[60px]' : 'min-h-0'}`}>
+              <div
+                className={`transition-all duration-200 ${errors.root ? "min-h-[60px]" : "min-h-0"}`}
+              >
                 {errors.root && (
                   <div className="rounded-md bg-destructive/15 p-3 text-sm text-destructive">
                     {errors.root.message}
@@ -111,12 +115,14 @@ export function SignupForm({
                   type="email"
                   placeholder="m@example.com"
                   disabled={isSubmitting}
-                  className={errors.email ? 'border-destructive' : ''}
-                  {...register('email')}
+                  className={errors.email ? "border-destructive" : ""}
+                  {...register("email")}
                 />
                 <div className="min-h-[20px]">
                   {errors.email && (
-                    <p className="text-sm text-destructive">{errors.email.message}</p>
+                    <p className="text-sm text-destructive">
+                      {errors.email.message}
+                    </p>
                   )}
                 </div>
               </div>
@@ -128,12 +134,14 @@ export function SignupForm({
                     id="password"
                     type="password"
                     disabled={isSubmitting}
-                    className={errors.password ? 'border-destructive' : ''}
-                    {...register('password')}
+                    className={errors.password ? "border-destructive" : ""}
+                    {...register("password")}
                   />
                   <div className="min-h-[20px]">
                     {errors.password && (
-                      <p className="text-sm text-destructive">{errors.password.message}</p>
+                      <p className="text-sm text-destructive">
+                        {errors.password.message}
+                      </p>
                     )}
                   </div>
                 </div>
@@ -144,12 +152,16 @@ export function SignupForm({
                     id="confirmPassword"
                     type="password"
                     disabled={isSubmitting}
-                    className={errors.confirmPassword ? 'border-destructive' : ''}
-                    {...register('confirmPassword')}
+                    className={
+                      errors.confirmPassword ? "border-destructive" : ""
+                    }
+                    {...register("confirmPassword")}
                   />
                   <div className="min-h-[20px]">
                     {errors.confirmPassword && (
-                      <p className="text-sm text-destructive">{errors.confirmPassword.message}</p>
+                      <p className="text-sm text-destructive">
+                        {errors.confirmPassword.message}
+                      </p>
                     )}
                   </div>
                 </div>
@@ -162,7 +174,7 @@ export function SignupForm({
                     Creating account...
                   </>
                 ) : (
-                  'Create Account'
+                  "Create Account"
                 )}
               </Button>
 
@@ -203,8 +215,11 @@ export function SignupForm({
               </div>
 
               <p className="text-center text-sm text-muted-foreground">
-                Already have an account?{' '}
-                <a href="/login" className="font-medium text-primary hover:underline">
+                Already have an account?{" "}
+                <a
+                  href="/login"
+                  className="font-medium text-primary hover:underline"
+                >
                   Sign in
                 </a>
               </p>
@@ -222,11 +237,11 @@ export function SignupForm({
         </CardContent>
       </Card>
       <p className="px-6 text-center text-xs text-muted-foreground">
-        By clicking continue, you agree to our{' '}
+        By clicking continue, you agree to our{" "}
         <a href="#" className="underline underline-offset-4 hover:text-primary">
           Terms of Service
-        </a>{' '}
-        and{' '}
+        </a>{" "}
+        and{" "}
         <a href="#" className="underline underline-offset-4 hover:text-primary">
           Privacy Policy
         </a>
