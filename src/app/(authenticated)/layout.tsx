@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode } from "react";
 
 export default function AuthenticatedLayout({
   children,
@@ -7,9 +7,7 @@ export default function AuthenticatedLayout({
 }) {
   return (
     <div className="flex min-h-screen flex-col">
-      <main className="flex-1">
-        {children}
-      </main>
+      <main className="flex-1">{children}</main>
     </div>
   );
 }
