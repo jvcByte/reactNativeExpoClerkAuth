@@ -1,27 +1,29 @@
-'use client';
+"use client";
 
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Loader2 } from 'lucide-react';
-import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
-import Image from "next/image"
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 // Define the form schema with Zod
 const loginFormSchema = z.object({
-  email: z.string()
-    .min(1, 'Email is required')
-    .email('Please enter a valid email address'),
-  password: z.string()
-    .min(1, 'Password is required')
-    .min(8, 'Password must be at least 8 characters')
-    .max(100, 'Password must be less than 100 characters')
+  email: z
+    .string()
+    .min(1, "Email is required")
+    .email("Please enter a valid email address"),
+  password: z
+    .string()
+    .min(1, "Password is required")
+    .min(8, "Password must be at least 8 characters")
+    .max(100, "Password must be less than 100 characters"),
 });
 
 type LoginFormValues = z.infer<typeof loginFormSchema>;
@@ -39,23 +41,23 @@ export function LoginForm({
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginFormSchema),
     defaultValues: {
-      email: '',
-      password: '',
+      email: "",
+      password: "",
     },
   });
 
-  const onSubmit = async ({email, password}: LoginFormValues) => {
+  const onSubmit = async ({ email, password }: LoginFormValues) => {
     try {
       // TODO: Replace with actual login logic
-      
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       toast.success(`Successfully logged in: ${email} ${password}`);
-      router.push('/dashboard');
+      router.push("/dashboard");
     } catch (error) {
       toast.error(`Login failed: ${error}`);
-      setError('root', {
-        type: 'manual',
+      setError("root", {
+        type: "manual",
         message: `Login failed: ${error}`,
       });
     }
@@ -73,9 +75,11 @@ export function LoginForm({
                   Login to your account
                 </p>
               </div>
-              
+
               {/* Error message with fixed height to prevent layout shift */}
-              <div className={`transition-all duration-200 ${errors.root ? 'min-h-[60px]' : 'min-h-0'}`}>
+              <div
+                className={`transition-all duration-200 ${errors.root ? "min-h-[60px]" : "min-h-0"}`}
+              >
                 {errors.root && (
                   <div className="rounded-md bg-destructive/15 p-1 text-sm text-destructive">
                     {errors.root.message}
@@ -90,12 +94,14 @@ export function LoginForm({
                   type="email"
                   placeholder="m@example.com"
                   disabled={isSubmitting}
-                  className={errors.email ? 'border-destructive' : ''}
-                  {...register('email')}
+                  className={errors.email ? "border-destructive" : ""}
+                  {...register("email")}
                 />
                 <div className="min-h-[20px]">
                   {errors.email && (
-                    <p className="text-sm text-destructive">{errors.email.message}</p>
+                    <p className="text-sm text-destructive">
+                      {errors.email.message}
+                    </p>
                   )}
                 </div>
               </div>
@@ -114,12 +120,14 @@ export function LoginForm({
                   id="password"
                   type="password"
                   disabled={isSubmitting}
-                  className={errors.password ? 'border-destructive' : ''}
-                  {...register('password')}
+                  className={errors.password ? "border-destructive" : ""}
+                  {...register("password")}
                 />
                 <div className="min-h-[20px]">
                   {errors.password && (
-                    <p className="text-sm text-destructive">{errors.password.message}</p>
+                    <p className="text-sm text-destructive">
+                      {errors.password.message}
+                    </p>
                   )}
                 </div>
               </div>
@@ -131,7 +139,7 @@ export function LoginForm({
                     Logging in...
                   </>
                 ) : (
-                  'Login'
+                  "Login"
                 )}
               </Button>
               <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
@@ -192,5 +200,5 @@ export function LoginForm({
         and <a href="#">Privacy Policy</a>.
       </div>
     </div>
-  )
+  );
 }
